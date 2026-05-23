@@ -99,7 +99,7 @@ export async function fetchNearbyServices(lat, lng, radiusMetres = 5000, types =
     out body;
   `
 
-  const response = await fetch('https://overpass-api.de/api/interpreter', {
+  const response = await fetch('https://overpass.kumi.systems/api/interpreter', {
     method: 'POST',
     body: overpassQuery,
   })
