@@ -1,0 +1,34 @@
+{
+  "name": "RoadSOS — AI Emergency Assistant",
+  "short_name": "RoadSOS",
+  "description": "AI-powered emergency road safety assistant. Find ambulance, police, hospitals and towing services instantly.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#dc2626",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "medical", "navigation"],
+  "shortcuts": [
+    {
+      "name": "Call Ambulance",
+      "short_name": "Ambulance",
+      "description": "Call 108 immediately",
+      "url": "/",
+      "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Call Police",
+      "short_name": "Police",
+      "description": "Call 112 immediately",
+      "url": "/"
+    }
+  ]
+}
