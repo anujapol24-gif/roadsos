@@ -216,7 +216,14 @@ function getSuggestions(userText, botText) {
 
 // Main Chat Interface
 export default function ChatInterface({ location, locationName, isOnline, language }) {
-  const [messages, setMessages]         = useState([])
+  const [messages, setMessages] = useState(() => {
+  try {
+    const saved = localStorage.getItem('roadsos_chat_history')
+    return saved ? JSON.parse(saved) : []
+  } catch {
+    return []
+  }
+})
   const [inputText, setInputText]       = useState('')
   const [isLoading, setIsLoading]       = useState(false)
   const [streamingText, setStreamingText] = useState('')
@@ -333,6 +340,7 @@ export default function ChatInterface({ location, locationName, isOnline, langua
       }
 
       setMessages((prev) => [...prev, botMessage])
+      localStorage.setItem('roadsos_chat_history', JSON.stringify([...updatedMessages, botMessage]))
       setStreamingText('')
       setSuggestions(getSuggestions(trimmed, fullText))
 
@@ -414,6 +422,20 @@ export default function ChatInterface({ location, locationName, isOnline, langua
           />
         ) : (
           <>
+          {messages.length > 0 && (
+              <div className="flex justify-end px-4 pt-2">
+                <button
+                  onClick={() => {
+                    setMessages([])
+                    localStorage.removeItem('roadsos_chat_history')
+                  }}
+                  className="text-xs text-gray-500 hover:text-red-400 transition-colors"
+                >
+                  Clear chat
+                </button>
+              </div>
+            )}
+          
             {messages.map((message) => (
               <ChatBubble key={message.id} message={message} />
             ))}
