@@ -5,6 +5,10 @@
 
 // Types of services we can search for
 // Each has an Overpass query tag and display info
+// Simple in-memory cache — results stay fresh for 5 minutes
+const serviceCache = new Map()
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+
 const SERVICE_TYPES = {
   hospital: {
     label: 'Hospital',
@@ -84,6 +88,14 @@ function getDistanceKm(lat1, lon1, lat2, lon2) {
 // types = array of service type keys to search for
 export async function fetchNearbyServices(lat, lng, radiusMetres = 5000, types = Object.keys(SERVICE_TYPES)) {
 
+  // Check cache first
+  const cacheKey = `${lat.toFixed(3)},${lng.toFixed(3)},${radiusMetres}`
+  const cached = serviceCache.get(cacheKey)
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    console.log('[RoadSOS] Serving from cache')
+    return cached.data
+  }
+
   // Build Overpass query — search for all requested types at once
   const queries = types
     .map((type) => SERVICE_TYPES[type]?.query)
@@ -99,10 +111,16 @@ export async function fetchNearbyServices(lat, lng, radiusMetres = 5000, types =
     out body;
   `
 
-  const response = await fetch('https://overpass.kumi.systems/api/interpreter', {
-    method: 'POST',
-    body: overpassQuery,
-  })
+  const controller = new AbortController()
+const timeoutId = setTimeout(() => controller.abort(), 8000) // 8 second timeout
+
+const response = await fetch(`${BACKEND}/overpass`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ query: overpassQuery }),
+  signal: controller.signal,
+})
+clearTimeout(timeoutId)
 
   if (!response.ok) {
     throw new Error('Failed to fetch from OpenStreetMap')
@@ -160,6 +178,8 @@ export async function fetchNearbyServices(lat, lng, radiusMetres = 5000, types =
     // Sort by distance — nearest first
     .sort((a, b) => a.distanceKm - b.distanceKm)
 
+    // Save to cache
+  serviceCache.set(cacheKey, { data: services, timestamp: Date.now() })
   return services
 }
 

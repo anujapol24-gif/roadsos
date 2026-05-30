@@ -224,10 +224,14 @@ export default function NearbyServices({ location, locationName }) {
 
         {/* Loading state */}
         {loading && (
-          <div className="flex flex-col items-center justify-center py-12">
+          <div className="flex flex-col items-center justify-center py-12 gap-3">
             <div className="w-8 h-8 border-2 border-red-500 border-t-transparent 
-                            rounded-full animate-spin mb-3" />
+                            rounded-full animate-spin" />
             <p className="text-gray-400 text-sm">Finding nearby services...</p>
+            <p className="text-gray-600 text-xs text-center px-4">
+              Searching OpenStreetMap database.
+              This takes 5–10 seconds on first load.
+            </p>
           </div>
         )}
 

@@ -35,6 +35,23 @@ function App() {
     }
   }, [])
 
+  // Keep Render backend alive — ping every 10 minutes
+  useEffect(() => {
+    const BACKEND = import.meta.env.VITE_BACKEND_URL
+    if (!BACKEND) return
+
+    const ping = () => {
+      fetch(`${BACKEND}/health`).catch(() => {})
+    }
+
+    // Ping immediately on load
+    ping()
+
+    // Then ping every 10 minutes
+    const interval = setInterval(ping, 10 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [])
+
   const handleSplashComplete = useCallback(() => setShowSplash(false), [])
   const handleMoreNavigate   = (tabId) => setActiveTab(tabId)
 

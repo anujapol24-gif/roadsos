@@ -266,12 +266,16 @@ function NearbyServicesSection({ location }) {
 
       {/* Loading */}
       {loading && (
-        <div className="flex items-center justify-center py-6 gap-3">
-          <div className="w-5 h-5 border-2 border-red-500 border-t-transparent
-                          rounded-full animate-spin" />
-          <span className="text-gray-400 text-sm">Finding nearby services...</span>
-        </div>
-      )}
+          <div className="flex flex-col items-center justify-center py-12 gap-3">
+            <div className="w-8 h-8 border-2 border-red-500 border-t-transparent 
+                            rounded-full animate-spin" />
+            <p className="text-gray-400 text-sm">Finding nearby services...</p>
+            <p className="text-gray-600 text-xs text-center px-4">
+              Searching OpenStreetMap database.
+              This takes 5–10 seconds on first load.
+            </p>
+          </div>
+        )}
 
       {/* Error */}
       {error && !loading && (
